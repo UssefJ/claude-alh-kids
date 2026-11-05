@@ -1,0 +1,4 @@
+/* Both the audio player and the silent preview use one continuous timeline. */
+function partAt(parts,time){let active=0;for(let i=0;i<parts.length;i++){if(time>=parts[i].start)active=i;else break}return active}
+function validateStory(story){if(!story.parts.length)throw Error('Voeg minimaal één deel toe.');if(!(story.duration>0))throw Error('De totale duur moet groter zijn dan nul.');let previous=-1;story.parts.forEach((p,i)=>{if(!p.title.trim()||!p.text.trim())throw Error('Vul de titel en tekst van ieder deel in.');if(!Number.isFinite(p.start)||p.start<0||p.start<=previous||p.start>=story.duration)throw Error('Starttijden moeten oplopen en binnen de totale duur liggen.');if(i===0&&p.start!==0)throw Error('Het eerste deel moet bij 0 seconden beginnen.');previous=p.start});return true}
+if(typeof module!=='undefined')module.exports={partAt,validateStory};
