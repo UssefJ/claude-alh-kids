@@ -1,0 +1,24 @@
+
+{
+  "name": "Al Himmah Kids",
+  "short_name": "Al Himmah Kids",
+  "description": "Samen leren en luisteren met Al Himmah Kids",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fffaf0",
+  "theme_color": "#244c59",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+  
