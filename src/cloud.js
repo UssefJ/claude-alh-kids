@@ -5,7 +5,7 @@ const urls=new Map();
 const fail=e=>{if(e)throw Error(e.message||'Verbinding mislukt. Probeer opnieuw.')};
 function requireClient(){if(!client)throw Error('Servervariant 1 is nog niet verbonden met Supabase. Volg START-HIER.md uit het installatiepakket.');return client}
 function mediaURL(asset){if(!asset)return '';if(typeof asset==='string')return safeURL(asset);if(asset.bucket==='ah-public')return requireClient().storage.from(asset.bucket).getPublicUrl(asset.path).data.publicUrl;return urls.get(asset.bucket+'/'+asset.path)||''}
-function safeURL(value){if(typeof value!=='string')return '';if(/^\/(?!\/)/.test(value))return value;try{const url=new URL(value,location.href);return ['http:','https:'].includes(url.protocol)?url.href:''}catch{return ''}}
+function safeURL(value){if(typeof value!=='string'||!value.trim())return '';value=value.trim();if(/^\/(?!\/)/.test(value))return value;try{const url=new URL(value,location.href);return ['http:','https:'].includes(url.protocol)?url.href:''}catch{return ''}}
 async function hydrate(value){if(!value||typeof value!=='object')return;if(value.bucket==='ah-drafts'&&typeof value.path==='string'){const {data,error}=await requireClient().storage.from(value.bucket).createSignedUrl(value.path,86400);fail(error);urls.set(value.bucket+'/'+value.path,data.signedUrl);return}await Promise.all(Object.values(value).map(hydrate))}
 const mimeByExt={mp3:'audio/mpeg',wav:'audio/wav',m4a:'audio/mp4',ogg:'audio/ogg',aac:'audio/aac',flac:'audio/flac',opus:'audio/opus',webm:'audio/webm',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp'};
 async function materialize(value,bucket,created){
@@ -22,3 +22,4 @@ async function deleteRecord(record){const {error}=await requireClient().rpc('ah_
 async function listPublic(category){const {data,error}=await requireClient().from('ah_published').select('key,content,sort_order').eq('category',category).order('sort_order').order('key');fail(error);return data.map(r=>r.content)}
 async function getUser(){const {data,error}=await requireClient().auth.getUser();if(error||!data.user)return null;const {data:allowed,error:check}=await requireClient().rpc('ah_is_admin');fail(check);if(!allowed)throw Error('Dit account heeft geen beheerdersrechten.');return data.user}
 window.Cloud={configured:!!client,client,mediaURL,safeURL,listPublic,listAdmin,saveRecord,deleteRecord,async swap(a,b){const {error}=await requireClient().rpc('ah_swap',{a:a.key,b:b.key,rev_a:a.serverRevision,rev_b:b.serverRevision});fail(error)},getUser,async signIn(email,password){const {error}=await requireClient().auth.signInWithPassword({email,password});fail(error);return getUser()},async signOut(){const {error}=await requireClient().auth.signOut();fail(error)},hydrate};
+
