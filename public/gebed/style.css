@@ -6,3 +6,7 @@
 .reading{border:0;border-radius:0;box-shadow:none;background:transparent;isolation:auto}.card-heading .badge{margin-top:0;border:0}.modes{margin:0}.hero{min-height:135px;padding-top:35px;padding-bottom:12px}.stepbar{margin:6px 0 10px}.mode-help{margin:6px 0 10px}.prayer-card{min-height:390px}.card-heading h2{margin-bottom:0}.prayer-card .arabic{margin-top:0}.pose{max-width:310px;margin:auto}
 
 .pose.tahiyyat-pose{background-image:url('../assets/tahiyyat-boy.png');background-size:contain;background-position:center;background-repeat:no-repeat}
+
+
+/* Allow room for the approved Hafs vowel marks at every viewport size. */
+.prayer-card .arabic{line-height:2.2;text-shadow:none;white-space:normal}
