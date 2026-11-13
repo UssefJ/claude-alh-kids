@@ -59,3 +59,7 @@
 
 /* Approved Hafs reading: fixed size, natural wrapping and room for vowel marks. */
 .verse{font-size:52px;line-height:2.2;text-shadow:none;min-width:0;flex:1;white-space:normal}
+
+
+/* Arabic surah names use the same approved face as the verses. */
+.surah .arabic{font-family:Quran,serif;font-weight:400;line-height:2.2}
