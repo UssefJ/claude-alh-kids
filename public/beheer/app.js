@@ -24,13 +24,20 @@ function dashboard(){const content=records.filter(filled).length,withAudio=recor
 function listPage(){
  const arr=records.filter(r=>r.draft.category===category).sort((a,b)=>a.order-b.order||a.key.localeCompare(b.key));
  $('#main').innerHTML=`<div class="breadcrumbs"><a href="#">Overzicht</a> / ${catName(category)}</div><div class="topline"><div><h1>${catName(category)}</h1><p>${arr.length} onderdelen · ${arr.filter(r=>r.draft.definitive).length} definitief</p></div><div class="list-buttons"><button id="new" class="primary">＋ Nieuw onderdeel</button><button id="import-packages">Pakketten importeren</button></div></div><div class="panel section-gap"><strong>Def. bepaal jij zelf</strong><p>Groen betekent door jou definitief verklaard, ook met lege velden. Alleen definitieve onderdelen kunnen zichtbaar worden en gepubliceerd worden. Uitvinken van Def. of Zichtbaar haalt het onderdeel direct uit de kinderapp. Zichtbaar aanvinken zet het klaar; klik daarna op Publiceren.</p><div class="list-buttons"><button id="all-visible">Alles zichtbaar maken</button><button id="all-publish" class="gold-button">Alles publiceren</button></div><small>Deze knoppen gelden voor alle definitieve onderdelen in deze categorie, ook buiten je zoekfilter.</small>${arr.some(r=>r.draft.definitive&&!filled(r))?'<p class="detail-note">Let op: '+arr.filter(r=>r.draft.definitive&&!filled(r)).length+' definitieve onderdelen bevatten nog geen Arabische tekst of verhaaltekst. Deze worden ook meegenomen bij Alles publiceren.</p>':''}<p id="batch-progress" role="status"></p></div><div class="toolbar"><input id="search" type="search" aria-label="Zoeken" placeholder="Zoek op naam…" value="${esc(filter)}"><select id="filter" aria-label="Status filter"><option value="all">Alle onderdelen</option><option value="missing">Zonder audio</option><option value="published">Gepubliceerd</option><option value="def">Definitief</option></select></div><div class="list" id="list"></div>`;
- let mode='all';function paint(){const selected=arr.filter(r=>r.draft.title.toLowerCase().includes(filter.toLowerCase())&&(mode!=='missing'||!audioCount(r.draft))&&(mode!=='published'||r.publishedAt)&&(mode!=='def'||r.draft.definitive));
- $('#list').innerHTML=selected.map(r=>`<div class="item ${r.draft.definitive?'definitive':''}"><a class="item-main" href="#${esc(r.key)}"><strong>${esc(r.draft.title||'Zonder titel')}</strong><span class="muted">${r.draft.units.length} onderdelen · ${audioCount(r.draft)} opnamen</span></a><div class="row-controls"><label class="check"><input type="checkbox" data-def="${esc(r.key)}" ${r.draft.definitive?'checked':''}> Def.</label><label class="check"><input type="checkbox" data-visible="${esc(r.key)}" ${r.draft.visible?'checked':''} ${!r.draft.definitive?'disabled':''}> Zichtbaar</label>${status(r)}<button class="gold-button" data-publish="${esc(r.key)}" ${!r.draft.definitive?'disabled':''}>Publiceren</button><div class="order"><button data-order="${esc(r.key)}" data-direction="-1" aria-label="${esc(r.draft.title)} omhoog" ${arr.indexOf(r)===0?'disabled':''}>↑</button><button data-order="${esc(r.key)}" data-direction="1" aria-label="${esc(r.draft.title)} omlaag" ${arr.indexOf(r)===arr.length-1?'disabled':''}>↓</button></div><a href="#${esc(r.key)}">Bewerken</a><button class="danger" data-delete="${esc(r.key)}">Verwijderen</button></div></div>`).join('')||'<p>Geen onderdelen gevonden.</p>';
+ let mode='all',selecting=false;const selectedKeys=new Set();
+ $('#search').closest('.toolbar').insertAdjacentHTML('afterend','<div class="list-buttons section-gap"><button id="select-items" aria-pressed="false">Selecteren</button><button id="delete-selected" class="danger" hidden disabled>Verwijderen (0)</button><span id="selection-count" role="status"></span></div>');
+ function updateSelection(){const count=selectedKeys.size;$('#select-items').textContent=selecting?'Selecteren annuleren':'Selecteren';$('#select-items').setAttribute('aria-pressed',String(selecting));$('#delete-selected').hidden=!selecting;$('#delete-selected').disabled=!count;$('#delete-selected').textContent='Verwijderen ('+count+')';$('#selection-count').textContent=selecting?count+' geselecteerd · Bij wijzigen van het zoekfilter wordt de selectie gewist.':''}
+ $('#select-items').onclick=()=>{if(busy)return;selecting=!selecting;selectedKeys.clear();paint()};
+ $('#delete-selected').onclick=()=>deleteSelectedRecords([...selectedKeys]);
+ function paint(){const selected=arr.filter(r=>r.draft.title.toLowerCase().includes(filter.toLowerCase())&&(mode!=='missing'||!audioCount(r.draft))&&(mode!=='published'||r.publishedAt)&&(mode!=='def'||r.draft.definitive));
+ $('#list').innerHTML=selected.map(r=>`<div class="item ${r.draft.definitive?'definitive':''}">${selecting?`<label class="check"><input type="checkbox" data-select-item="${esc(r.key)}" aria-label="Selecteer ${esc(r.draft.title||'Zonder titel')}" ${selectedKeys.has(r.key)?'checked':''}> Selecteer</label>`:''}<a class="item-main" href="#${esc(r.key)}"><strong>${esc(r.draft.title||'Zonder titel')}</strong><span class="muted">${r.draft.units.length} onderdelen · ${audioCount(r.draft)} opnamen</span></a><div class="row-controls"><label class="check"><input type="checkbox" data-def="${esc(r.key)}" ${r.draft.definitive?'checked':''}> Def.</label><label class="check"><input type="checkbox" data-visible="${esc(r.key)}" ${r.draft.visible?'checked':''} ${!r.draft.definitive?'disabled':''}> Zichtbaar</label>${status(r)}<button class="gold-button" data-publish="${esc(r.key)}" ${!r.draft.definitive?'disabled':''}>Publiceren</button><div class="order"><button data-order="${esc(r.key)}" data-direction="-1" aria-label="${esc(r.draft.title)} omhoog" ${arr.indexOf(r)===0?'disabled':''}>↑</button><button data-order="${esc(r.key)}" data-direction="1" aria-label="${esc(r.draft.title)} omlaag" ${arr.indexOf(r)===arr.length-1?'disabled':''}>↓</button></div><a href="#${esc(r.key)}">Bewerken</a><button class="danger" data-delete="${esc(r.key)}">Verwijderen</button></div></div>`).join('')||'<p>Geen onderdelen gevonden.</p>';
+ updateSelection();
+ document.querySelectorAll('[data-select-item]').forEach(b=>b.onchange=()=>{if(b.checked)selectedKeys.add(b.dataset.selectItem);else selectedKeys.delete(b.dataset.selectItem);updateSelection()});
  document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteRecord(b.dataset.delete));
  for(const [attr,action] of [['def','definitive'],['visible','visible'],['publish','publish']])document.querySelectorAll('[data-'+attr+']').forEach(b=>b[action==='publish'?'onclick':'onchange']=()=>rowAction(b.dataset[attr],action,b.checked));
  document.querySelectorAll('[data-order]').forEach(b=>b.onclick=async()=>{if(busy)return;busy=true;const i=arr.findIndex(r=>r.key===b.dataset.order),j=i+Number(b.dataset.direction);try{await Cloud.swap(arr[i],arr[j]);await load();listPage();toast('Volgorde opgeslagen, ook in de kinderapp.')}catch(e){toast(e.message)}finally{busy=false}});
  }
- $('#search').oninput=e=>{filter=e.target.value;paint()};$('#filter').onchange=e=>{mode=e.target.value;paint()};
+ $('#search').oninput=e=>{filter=e.target.value;selectedKeys.clear();paint()};$('#filter').onchange=e=>{mode=e.target.value;selectedKeys.clear();paint()};
  $('#new').onclick=()=>{const id='nieuw-'+Date.now();const r={key:category+'/'+id,order:Math.max(-1,...arr.map(x=>x.order))+1,draft:{id,category,title:'Nieuw onderdeel',visible:false,subtitle:'',instruction:'',duration:420,units:category==='alfabet'?[unit({title:'Letterklank'}),unit({title:'Voorbeeldwoord'})]:[unit({title:unitName(category)+' 1'})]},published:null,updated:null,publishedAt:null};records.push(r);location.hash=r.key};
  $('#import-packages').onclick=importPackagesDialog;$('#all-visible').onclick=()=>batchAction('visible');$('#all-publish').onclick=()=>batchAction('publish');paint();
 }
@@ -78,6 +85,30 @@ async function deleteRecord(key){
  const r=records.find(x=>x.key===key);if(!r)return;
  modal('Onderdeel verwijderen',`<p>Wil je <strong>${esc(r.draft.title)}</strong> verwijderen uit deze beheeromgeving?</p><p>Het concept en de gepubliceerde versie worden verwijderd. Het onderdeel verdwijnt ook uit de kinderapp.</p><button class="danger" id="confirm-delete">Ja, onderdeel verwijderen</button> <button id="cancel-delete">Annuleren</button>`);
  $('#cancel-delete').onclick=()=>$('#modal').close();$('#confirm-delete').onclick=async()=>{if(busy)return;busy=true;try{await put({key,deleted:true});records=records.filter(x=>x.key!==key);dirty=false;$('#modal').close();if(active?.key===key){active=null;location.hash=category}else listPage();toast('Onderdeel verwijderd uit beheer en kinderapp.')}catch{toast('Verwijderen mislukt. Het onderdeel is behouden.')}finally{busy=false}};
+}
+async function deleteSelectedRecords(keys){
+ if(busy)return;
+ const target=category,keySet=new Set(keys),items=records.filter(r=>r.draft.category===target&&keySet.has(r.key));
+ if(!items.length)return;
+ modal('Geselecteerde onderdelen verwijderen',`<p><strong>Weet je zeker dat je deze ${items.length} onderdelen wilt verwijderen?</strong></p><ul>${items.map(r=>`<li>${esc(r.draft.title||'Zonder titel')}</li>`).join('')}</ul><p>De concepten en gepubliceerde versies worden verwijderd. De onderdelen verdwijnen ook uit de kinderapp. Dit kan niet ongedaan worden gemaakt.</p><button class="danger" id="confirm-delete-selected">Ja, ${items.length} onderdelen verwijderen</button> <button id="cancel-delete-selected">Annuleren</button><p id="delete-progress" role="status"></p>`);
+ $('#cancel-delete-selected').onclick=()=>$('#modal').close();
+ $('#confirm-delete-selected').onclick=async()=>{
+  if(busy)return;
+  if(category!==target){$('#modal').close();return}
+  busy=true;let done=0;const failed=[];
+  $('#confirm-delete-selected').disabled=true;$('#cancel-delete-selected').disabled=true;
+  try{
+   for(const r of items){
+    try{await put({key:r.key,deleted:true});records=records.filter(x=>x.key!==r.key);done++}
+    catch{failed.push(r.draft.title||'Zonder titel')}
+    if($('#delete-progress'))$('#delete-progress').textContent=`${done+failed.length} van ${items.length} verwerkt…`;
+   }
+  }finally{
+   busy=false;listPage();
+   modal('Resultaat verwijderen',`<p>${done} van ${items.length} onderdelen verwijderd uit beheer en kinderapp.</p>${failed.length?`<p>Verwijderen kon voor deze onderdelen niet worden bevestigd. Vernieuw het overzicht en probeer zo nodig opnieuw:</p><ul>${failed.map(title=>`<li>${esc(title)}</li>`).join('')}</ul>`:''}<button id="close-delete-result">Sluiten</button>`);
+   $('#close-delete-result').onclick=()=>$('#modal').close();
+  }
+ };
 }
 function isAudioFile(f){return f.type.startsWith('audio/')||/\.(mp3|wav|m4a|ogg|aac|flac|opus|webm)$/i.test(f.name)}
 function ayahNumber(name){
