@@ -9,14 +9,16 @@ function parseContentPackage(raw){
  const title=text(raw.title,'titel',200);if(!title)throw Error('De pakketnaam ontbreekt.');
  if(!Array.isArray(raw.units)||!raw.units.length||raw.units.length>300)throw Error('Gebruik 1 tot 300 tekstdelen.');
  if(raw.category==='alfabet'&&raw.units.length!==2)throw Error('Een letterpakket bevat twee delen: letter en voorbeeldwoord.');
+ if(NewContent.categories.includes(raw.category)&&raw.units.length!==1)throw Error('Gebruik één tekstdeel per stap, video of vraag. Importeer meerdere bestanden voor meerdere onderdelen.');
  const units=raw.units.map((u,i)=>{if(!u||typeof u!=='object')throw Error('Ongeldig deel '+(i+1));const start=u.start??0;if(!Number.isFinite(start)||start<0)throw Error('Ongeldige starttijd.');return unit({title:text(u.title,'deeltitel',200),ar:text(u.ar,'Arabisch'),nl:text(u.nl,'vertaling'),phon:text(u.phon,'fonetisch'),text:text(u.text,'verhaal'),alt:text(u.alt,'afbeeldingsbeschrijving',1000),start})});
  const duration=raw.duration??420;if(!Number.isFinite(duration)||duration<=0)throw Error('Ongeldige duur.');
- return {category:raw.category,title,subtitle:text(raw.subtitle,'ondertitel',300),instruction:text(raw.instruction,'uitleg'),source:text(raw.source,'bron'),duration,units};
+ const extra={topic:text(raw.topic,'hoofdonderwerp',200),videoUrl:text(raw.videoUrl,'YouTube-link',2000)};NewContent.validate({category:raw.category,units,...extra});
+ return {...extra,category:raw.category,title,subtitle:text(raw.subtitle,'ondertitel',300),instruction:text(raw.instruction,'uitleg'),source:text(raw.source,'bron'),duration,units};
 }
 function importPackagesDialog(){
  const destination=category;
  modal('Meerdere pakketten importeren',`<p>Sleep één of meerdere JSON-pakketten voor <strong>${catName(destination)}</strong> naar dit vak. Maximaal 50 bestanden, 5 MB per bestand en 20 MB samen.</p><label class="dropzone field" id="packages-drop"><span class="drop-hint">↓ Sleep hier je pakketten</span><input id="packages-files" type="file" multiple accept=".json,application/json"></label><p>Elk pakket wordt een nieuw, verborgen concept met Def. uit. Bestaande onderdelen en audio blijven behouden. Dit zijn tekstpakketten; afbeeldingen en audio voeg je daarna toe.</p><button id="packages-template">Voorbeeldformaat downloaden</button><p id="packages-error" role="alert"></p>`);
- $('#packages-template').onclick=()=>downloadJSON(destination==='quran'?{format:'alhimmah-surah',version:1,surah:{number:1,name:'Al-Fatiha',arabicName:'الفاتحة',ayahCount:1},sources:{notes:'Sjabloon: vul de volledige surah in.'},ayahs:[{number:1,arabic:'Vul hier de Arabische tekst in',dutch:'',phonetic:''}]}:{format:'alhimmah-content',version:1,category:destination,title:'Voorbeeld — aanpassen',subtitle:'',instruction:'',source:'',duration:420,units:destination==='alfabet'?[unit({title:'Letterklank'}),unit({title:'Voorbeeldwoord'})]:[unit({title:'Deel 1'})]},'alhimmah-'+destination+'-sjabloon.json');
+ $('#packages-template').onclick=()=>downloadJSON(destination==='quran'?{format:'alhimmah-surah',version:1,surah:{number:1,name:'Al-Fatiha',arabicName:'الفاتحة',ayahCount:1},sources:{notes:'Sjabloon: vul de volledige surah in.'},ayahs:[{number:1,arabic:'Vul hier de Arabische tekst in',dutch:'',phonetic:''}]}:{format:'alhimmah-content',version:1,category:destination,topic:destination==='vragen'?'Mijn hoofdonderwerp':'',videoUrl:'',title:'Voorbeeld — aanpassen',subtitle:'',instruction:'',source:'',duration:420,units:destination==='alfabet'?[unit({title:'Letterklank'}),unit({title:'Voorbeeldwoord'})]:[unit({title:'Deel 1'})]},'alhimmah-'+destination+'-sjabloon.json');
  const read=async files=>{
   if(busy)return;const error=$('#packages-error');if(!files.length)return;
   if(files.length>50||files.reduce((n,f)=>n+f.size,0)>20*1024*1024){error.textContent='Kies maximaal 50 bestanden en 20 MB samen.';return}
@@ -36,3 +38,4 @@ function reviewPackages(rows,destination){
  };
  };render();
 }
+
