@@ -24,6 +24,7 @@ function bindAudio(u,seq){
  const hide=()=>{if(document.hidden){a.pause();sync()}};document.addEventListener('visibilitychange',hide);
  stopAudio=()=>{document.removeEventListener('visibilitychange',hide);a.onended=null;a.onerror=null;a.pause();a.removeAttribute('src');a.load()};
 }
+function learningText(u){return `${u.ar?`<p class="lesson-arabic" lang="ar" dir="rtl">${esc(u.ar)}</p>`:''}${u.phon?`<p class="lesson-phonetic">${esc(u.phon)}</p>`:''}${u.nl?`<p class="lesson-dutch">${esc(u.nl)}</p>`:''}`}
 function videoMarkup(d){const id=NewContent.youtubeID(d.videoUrl);return id?`<div class="video-stage" id="video"><button class="play" id="video-play" data-video="${id}" aria-label="Video afspelen">${play}</button><p>Bekijk de video</p></div><p class="video-fallback">Werkt de video niet? <a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Open op YouTube ↗</a></p>`:'<div class="video-stage empty-video"><p>Er is nog geen video toegevoegd.</p></div>'}
 function pager(cat,siblings,index,allLabel){return `<nav class="lesson-controls" aria-label="Onderdelen">${index>0?`<a class="soft" href="${href(cat,siblings[index-1].id)}">← Vorige</a>`:'<span></span>'}<a class="soft" href="${href(cat)}">${allLabel}</a>${index<siblings.length-1?`<a class="soft gold" href="${href(cat,siblings[index+1].id)}">Volgende →</a>`:'<span></span>'}</nav>`}
 function wuduMarkup(items,n){const d=items[n],u=d.units?.[0]||{},img=Cloud.mediaURL(d.image)||Cloud.safeURL(d.imageUrl);
@@ -48,7 +49,7 @@ async function render(){const seq=++token;stopAudio();stopAudio=()=>{};let [cat,
  }else{
  const d=items.find(x=>String(x.id)===id);if(!d)throw new Error('unavailable');active=d;const u=d.units?.[0]||{};const topic=d.topic||'Overige vragen';if(cat==='vragen'||cat==='installeren')openTopics.add(cat+'/'+topic);
  html=hero(cat==='installeren'?topic+' · '+d.title:d.title,cat==='vragen'?topic:names[cat],href(cat),cat==='vragen'?'Alle vragen':cat==='installeren'?'Browser kiezen':'Alle lessen');
- html+=cat==='vragen'?`<article class="answer-panel"><div class="answer-text">${esc(u.text||'')}</div><div class="answer-audio"><p>Luister naar het antwoord</p>${audioControls(u)}</div></article>`:`<section class="video-panel">${videoMarkup(d)}${u.text?`<p class="video-text">${esc(u.text)}</p>`:''}</section>`;
+ html+=cat==='vragen'?`<article class="answer-panel">${learningText(u)}<div class="answer-text">${esc(u.text||'')}</div><div class="answer-audio"><p>Luister naar het antwoord</p>${audioControls(u)}</div></article>`:`<section class="video-panel">${cat==='aqieda'&&!d.videoUrl&&(u.ar||u.nl||u.text)?'':videoMarkup(d)}${learningText(u)}${u.text?`<p class="video-text">${esc(u.text)}</p>`:''}</section>`;
  const siblings=cat==='aqieda'?items:items.filter(x=>(x.topic||'Overige vragen')===topic);html+=pager(cat,siblings,siblings.indexOf(d),cat==='vragen'?'Alle vragen':cat==='installeren'?'Apple of Android kiezen':'Alle lessen')+source(d);$('#main').innerHTML=html;
  }
  if(active&&['vragen','wudu'].includes(cat))bindAudio(active.units?.[0]||{},seq);
