@@ -1,7 +1,7 @@
 (function(root){
- const categories=['wudu','aqieda','vragen'];
+ const categories=['wudu','aqieda','vragen','installeren'];
  function youtubeID(value){if(!value||!String(value).trim())return '';try{const u=new URL(String(value).trim());if(u.protocol!=='https:')return '';const h=u.hostname.toLowerCase(),p=u.pathname.split('/').filter(Boolean);let id='';if(h==='youtu.be')id=p.length===1?p[0]:'';else if(['youtube.com','www.youtube.com','m.youtube.com','youtube-nocookie.com','www.youtube-nocookie.com'].includes(h))id=u.pathname==='/watch'?u.searchParams.get('v'):['embed','shorts'].includes(p[0])&&p.length===2?p[1]:'';return /^[\w-]{11}$/.test(id||'')?id:''}catch{return ''}}
  function groups(items){const out=new Map();for(const item of items){const name=String(item.topic||'Overige vragen').trim()||'Overige vragen';if(!out.has(name))out.set(name,[]);out.get(name).push(item)}return [...out].map(([title,items])=>({title,items}))}
- function validate(d){if(!categories.includes(d.category))return;if(d.units.length!==1)throw Error('Elk onderdeel bevat één stap, video of antwoord. Maak meer onderdelen via Nieuw onderdeel.');if(d.category==='aqieda'&&d.videoUrl?.trim()&&!youtubeID(d.videoUrl))throw Error('Gebruik een geldige https YouTube-videolink, of laat het veld leeg.');}
+ function validate(d){if(!categories.includes(d.category))return;if(d.category==='installeren'&&!['Apple','Android'].includes(d.topic))throw Error('Kies Apple of Android bij apparaat.');if(d.units.length!==1)throw Error('Elk onderdeel bevat één stap, video of antwoord. Maak meer onderdelen via Nieuw onderdeel.');if(['aqieda','installeren'].includes(d.category)&&d.videoUrl?.trim()&&!youtubeID(d.videoUrl))throw Error('Gebruik een geldige https YouTube-videolink, of laat het veld leeg.');}
  root.NewContent={categories,youtubeID,groups,validate};
 })(globalThis);

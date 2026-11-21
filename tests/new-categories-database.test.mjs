@@ -1,11 +1,13 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {PGlite} from '@electric-sql/pglite';
-for(const category of ['wudu','aqieda','vragen'])test('Nieuwe categorie '+category+': rechten, revisies, publiceren, intrekken en verwijderen',async()=>{
+for(const category of ['wudu','aqieda','vragen','installeren'])test('Nieuwe categorie '+category+': rechten, revisies, publiceren, intrekken en verwijderen',async()=>{
  const db=new PGlite();try{
  await db.exec(`create role anon;create role authenticated;create schema auth;create schema storage;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;grant usage on schema auth,public,storage to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;create table storage.buckets(id text primary key,name text,public bool,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id text,bucket_id text);alter table storage.objects enable row level security;grant all on storage.objects to authenticated;`);
  await db.exec(readFileSync('supabase/001-server-v1.sql','utf8'));
  await db.exec(readFileSync('supabase/002-admin-workflow.sql','utf8'));
  await db.exec(readFileSync('supabase/003-new-categories.sql','utf8'));
  await db.exec(readFileSync('supabase/003-new-categories.sql','utf8'));
+ await db.exec(readFileSync('supabase/004-installatiehulp.sql','utf8'));
+ await db.exec(readFileSync('supabase/004-installatiehulp.sql','utf8'));
  const admin='00000000-0000-0000-0000-000000000001',other='00000000-0000-0000-0000-000000000002';
  await db.exec(`insert into auth.users values('${admin}'),('${other}');insert into ah_admins values('${admin}');set role anon;`);
  await assert.rejects(db.query('select * from ah_content'),/permission denied/);assert.equal((await db.query('select * from ah_published')).rows.length,0);

@@ -1,6 +1,6 @@
 {
   "name": "alhimmah-kids-server-v1",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -19,4 +19,3 @@
     "@electric-sql/pglite": "0.5.12"
   }
 }
-
