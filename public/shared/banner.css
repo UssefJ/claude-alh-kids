@@ -31,7 +31,7 @@ html .hero.hero .back:hover{background:#fbe9c0;text-decoration:none}
 }
 @media(max-width:599px){
   html .hero.hero{min-height:0;padding:58px 8px 22px}
-  html .hero.hero::before{width:100%;background-size:auto 100%}
+  html .hero.hero::before{width:100%;background-size:165% 100%}
   html .hero.hero h1,html .hero.hero p{max-width:78%}
   html .hero.hero .back{font-size:16px;padding:7px 14px;min-height:40px}
 }
