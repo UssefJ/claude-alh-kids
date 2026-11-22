@@ -12,26 +12,26 @@ header .brand .brand-logo{display:block;height:46px;width:auto}
   header .brand .brand-logo{height:34px}
 }
 
-/* Wolken-hero op de vervolgpagina's */
-.hero{position:relative;isolation:isolate;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:clamp(150px,18vw,196px);padding:30px 12px 28px;margin-left:0;margin-right:0}
-.hero::before{content:'';position:absolute;z-index:-1;inset:0 auto;left:50%;width:min(100%,1040px);transform:translateX(-50%);background:url('/assets/banner/wolken-maan.webp') center/100% 100% no-repeat;-webkit-mask-image:none;mask-image:none}
-.hero h1,.hero p{position:relative;max-width:min(580px,58%);margin-left:auto;margin-right:auto;font-family:Baloo,'Trebuchet MS',sans-serif;font-weight:800}
-.hero h1{color:#0b3a4a;line-height:1.08}
-.hero p{color:#14222d}
+/* Wolken-hero op de vervolgpagina's (dubbele class: wint van paginaspecifieke regels) */
+html .hero.hero{position:relative;isolation:isolate;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:clamp(150px,18vw,196px);padding:30px 12px 28px;margin-left:0;margin-right:0}
+html .hero.hero::before{content:'';position:absolute;z-index:-1;inset:0 auto;left:50%;width:min(100%,1040px);transform:translateX(-50%);background:url('/assets/banner/wolken-maan.webp') center/100% 100% no-repeat;-webkit-mask-image:none;mask-image:none}
+html .hero.hero h1,html .hero.hero p{position:relative;max-width:min(580px,58%);margin-left:auto;margin-right:auto;font-family:Baloo,'Trebuchet MS',sans-serif;font-weight:800}
+html .hero.hero h1{color:#0b3a4a;line-height:1.08}
+html .hero.hero p{color:#14222d}
 
 /* Terugknop als pil, links naast de wolk */
-.hero .back{position:absolute;left:0;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;padding:9px 18px;min-height:44px;border:2px solid #e8bd62;border-radius:24px;background:#fdf4df;color:#0b3a4a;font:800 18px/1 Baloo,'Trebuchet MS',sans-serif;text-decoration:none;box-shadow:0 2px 4px #846c3f22;z-index:1}
-.hero .back:hover{background:#fbe9c0;text-decoration:none}
+html .hero.hero .back{position:absolute;left:0;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;padding:9px 18px;min-height:44px;border:2px solid #e8bd62;border-radius:24px;background:#fdf4df;color:#0b3a4a;font:800 18px/1 Baloo,'Trebuchet MS',sans-serif;text-decoration:none;box-shadow:0 2px 4px #846c3f22;z-index:1}
+html .hero.hero .back:hover{background:#fbe9c0;text-decoration:none}
 
 @media(max-width:899px){
-  .hero{padding-top:64px}
-  .hero::before{top:52px}
-  .hero .back{top:4px;transform:none}
-  .hero h1,.hero p{max-width:min(560px,64%)}
+  html .hero.hero{padding-top:64px}
+  html .hero.hero::before{top:52px}
+  html .hero.hero .back{top:4px;transform:none}
+  html .hero.hero h1,html .hero.hero p{max-width:min(560px,64%)}
 }
 @media(max-width:599px){
-  .hero{min-height:0;padding:58px 8px 22px}
-  .hero::before{width:100%;background-size:auto 100%}
-  .hero h1,.hero p{max-width:78%}
-  .hero .back{font-size:16px;padding:7px 14px;min-height:40px}
+  html .hero.hero{min-height:0;padding:58px 8px 22px}
+  html .hero.hero::before{width:100%;background-size:auto 100%}
+  html .hero.hero h1,html .hero.hero p{max-width:78%}
+  html .hero.hero .back{font-size:16px;padding:7px 14px;min-height:40px}
 }
