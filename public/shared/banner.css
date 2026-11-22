@@ -2,7 +2,7 @@
    Wordt als laatste stylesheet geladen, zodat deze regels die van de losse pagina's vervangen. */
 
 /* Bovenbalk */
-header{background:#004d4a;border-bottom:0}
+html body header,html body header.banner{background:#004d4a;border-bottom:0;box-shadow:none}
 header .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0}
 header .brand .brand-stichting{display:block;height:52px;width:auto}
 header .brand .brand-logo{display:block;height:46px;width:auto}
