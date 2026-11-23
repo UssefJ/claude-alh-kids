@@ -9,7 +9,7 @@ const arrow='<svg viewBox="0 0 24 36" aria-hidden="true"><path d="m7 6 12 12L7 3
 const play='<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 5q-2-1-2 2v18q0 3 3 1l17-9q2-1 0-3Z" fill="currentColor"/></svg>';
 const pause='<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="5" width="7" height="22" rx="2" fill="currentColor"/><rect x="18" y="5" width="7" height="22" rx="2" fill="currentColor"/></svg>';
 const star=(()=>{const p=[];for(let k=0;k<16;k++){const r=k%2?12.5:18,a=Math.PI/2+k*Math.PI/8;p.push((20+r*Math.cos(a)).toFixed(1)+','+(20-r*Math.sin(a)).toFixed(1))}return `<svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="${p.join(' ')}" fill="#fff8e6" stroke="#e2a72a" stroke-width="2.4" stroke-linejoin="round"/></svg>`})();
-let items=null,current=null,token=0;
+let items=null,current=null,token=0,lastId='';
 
 function stopAll(){if(current){current.audio.pause();current.audio.currentTime=0;current.onstop?.();current=null}}
 function hero(title,subtitle,back,label){return `<section class="hero"><a class="back" href="${esc(back)}">← ${esc(label)}</a><h1 tabindex="-1" id="page-title">${esc(title)}</h1>${subtitle?`<p>${subtitle}</p>`:''}</section>`}
@@ -65,7 +65,7 @@ async function render(){
  try{await load();if(seq!==token)return;
   const id=decodeURIComponent(location.hash.slice(1));
   if(id)detailView(id);else{document.title='Sierah · Al Himmah Kids';listView()}
-  $('#page-title')?.focus({preventScroll:true});window.scrollTo(0,0);
+  $('#page-title')?.focus({preventScroll:true});const keep=!!(lastId&&id);lastId=id;if(!keep)window.scrollTo(0,0);
  }catch(e){if(seq!==token)return;$('#main').innerHTML=hero('Sierah','','/','Home')+'<section class="empty"><p>Laden is niet gelukt. Controleer je internetverbinding.</p><button class="soft" id="retry">Opnieuw proberen</button></section>';$('#retry').onclick=()=>{items=null;render()}}
 }
 window.addEventListener('hashchange',render);window.addEventListener('pagehide',stopAll);render();

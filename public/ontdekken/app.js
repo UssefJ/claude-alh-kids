@@ -55,9 +55,12 @@ async function render(){const seq=++token;stopAudio();stopAudio=()=>{};let [cat,
  if(active&&['vragen','wudu'].includes(cat))bindAudio(active.units?.[0]||{},seq);
  if($('#video-play'))$('#video-play').onclick=()=>{const id=$('#video-play').dataset.video;$('#video').innerHTML=`<iframe title="YouTube-instructievideo" src="https://www.youtube-nocookie.com/embed/${id}?rel=0&autoplay=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`};
  const image=$('.wudu-image');if(image)image.onerror=()=>{const msg=document.createElement('p');msg.className='image-empty';msg.textContent='De afbeelding kon niet worden geladen.';image.replaceWith(msg)};
- $('#page-title')?.focus({preventScroll:true});window.scrollTo(0,0);
+ $('#page-title')?.focus({preventScroll:true});if(!keepScroll())window.scrollTo(0,0);
  }catch(e){if(seq!==token)return;$('#main').innerHTML=hero(names[cat],'')+`<section class="empty-panel"><h2>${e.message==='unavailable'?'Dit onderdeel is niet beschikbaar.':'Laden is niet gelukt'}</h2><p>${e.message==='unavailable'?'Het onderdeel kan zijn verborgen of verwijderd.':'Controleer je internetverbinding en probeer opnieuw.'}</p><a class="soft" href="${href(cat)}">Terug</a> <button class="soft" id="retry">Opnieuw proberen</button></section>`;$('#retry').onclick=render}
 }
 /* 1.6: Vraag en antwoord is verhuisd naar Sierah. */
+/* 1.6: bij bladeren tussen stappen of vragen van dezelfde categorie blijft de pagina op dezelfde hoogte staan. */
+let lastRoute=location.hash;
+function keepScroll(){const [pc,pid]=lastRoute.slice(1).split('/'),[nc,nid]=location.hash.slice(1).split('/');lastRoute=location.hash;return !!(nid&&pc===nc&&(pid||nc==='wudu'))}
 function toSierah(){if(location.hash==='#vragen'||location.hash.startsWith('#vragen/')){location.replace('/sierah/');return true}return false}
 window.addEventListener('hashchange',()=>{if(!toSierah())render()});window.addEventListener('pagehide',()=>stopAudio());if(!toSierah())render();
