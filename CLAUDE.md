@@ -68,12 +68,12 @@ Valkuilen: browserzoom (Ctrl+0) op nieuw domein; `record->'draft' - 'x'` heeft v
 ## 5. Overzetten naar origineel (alleen op verzoek)
 1. Code: merge/push claude-alh-kids `main` naar alhimmah-kids `main` (origineel = gemeenschappelijke voorouder 708372e, dus fast-forward mogelijk). Cloudflare-env van het origineel blijft wijzen naar pwqbewmfkggwqqwnppba.
 2. DB origineel: eerst back-up (herstelset/export), dan 005-sierah.sql, data/006, data/007 uitvoeren op `pwqbewmfkggwqqwnppba`.
-3. Sierah-vraag/antwoord-teksten die in de kopie handmatig zijn gesplitst (vragen 7–9) zitten al in 005 (split op lege regel).
+3. De vraag/antwoord-splitsing van Sierah-vragen 1–3 (Arabisch "vraag\n\nantwoord") zit al in 005; de kopie-inhoud = herstelset-origineel + 005 + 006 + 007.
 4. Controleer live; Auth Site URL origineel ongemoeid.
 
 ## 6. Open punten
 - Auth Site URL kopie instellen.
-- Sierah: vragen 1–6 missen Arabisch/fonetisch; nog geen audio; enkele vragen zijn geen sira-onderwerp.
+- Sierah: vragen 1–3 (geboorte, plaats, vader) hebben ar/phon/nl; vragen 4–9 alleen Nederlands (geen ar/phon); geen enkele vraag heeft audio; vragen 4–9 zijn geen sira-onderwerp (ʿaqieda/adab, uit oude 'Vraag en antwoord').
 - Beheer-header niet in nieuwe stijl. Overzichtsafbeelding wudu ongebruikt.
 - Origineel staat nog op 1.5 (zie §5).
 - Quwa gepauzeerd: herstellen vóór ~20-02-2027, maar dan eerst een ander project pauzeren (limiet 2).
