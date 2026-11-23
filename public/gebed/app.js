@@ -216,6 +216,10 @@ function update(){
   $('#arabic').textContent=l.ar;
   $('#meaning').textContent=l.nl;
   $('#phon').textContent=l.phon;
+  /* 1.6: stappen zonder Arabisch of fonetisch (zoals 'Al-Fatiha en een surah naar keuze') tonen alleen de Nederlandse tekst */
+  $('#arabic').hidden=!l.ar;
+  $('#phon-toggle').hidden=!l.phon;
+  $('#phon').hidden=!l.phon||!showPhon;
   $('#line-count').textContent=`${esc(s.unit)} ${part+1} van ${s.lines.length}`;
   $('#line-prev').disabled=part===0;
   $('#line-next').disabled=part===s.lines.length-1;
