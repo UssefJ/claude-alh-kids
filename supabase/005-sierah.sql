@@ -51,6 +51,24 @@ where p.category='vragen'
 delete from public.ah_content c where c.category='vragen'
   and exists(select 1 from public.ah_content s where s.key='sierah/'||(c.record->'draft'->>'id'));
 
+-- Vragen waarvan het oude antwoordveld "vraag<lege regel>antwoord" bevatte, worden gesplitst
+-- in een vraagdeel en een antwoorddeel (Arabisch, fonetisch en Nederlands).
+create or replace function pg_temp.ah_sierah_split(item jsonb) returns jsonb language sql immutable as $$
+ select case when item is null or jsonb_typeof(item)<>'object' or position(E'\n\n' in coalesce(item->'units'->1->>'ar',''))=0 then item else
+  jsonb_set(jsonb_set(item,'{units,0}',(item->'units'->0)||jsonb_build_object(
+     'ar',split_part(item->'units'->1->>'ar',E'\n\n',1),
+     'phon',split_part(coalesce(item->'units'->1->>'phon',''),E'\n\n',1),
+     'nl',coalesce(nullif(split_part(coalesce(item->'units'->1->>'nl',''),E'\n\n',1),''),item->'units'->0->>'nl'))),
+   '{units,1}',(item->'units'->1)||jsonb_build_object(
+     'ar',btrim(substr(item->'units'->1->>'ar',position(E'\n\n' in item->'units'->1->>'ar')+2)),
+     'phon',case when position(E'\n\n' in coalesce(item->'units'->1->>'phon',''))>0 then btrim(substr(item->'units'->1->>'phon',position(E'\n\n' in item->'units'->1->>'phon')+2)) else coalesce(item->'units'->1->>'phon','') end,
+     'nl',case when position(E'\n\n' in coalesce(item->'units'->1->>'nl',''))>0 then btrim(substr(item->'units'->1->>'nl',position(E'\n\n' in item->'units'->1->>'nl')+2)) else coalesce(item->'units'->1->>'nl','') end))
+ end $$;
+update public.ah_content set record=jsonb_set(jsonb_set(record,'{draft}',pg_temp.ah_sierah_split(record->'draft')),'{published}',coalesce(pg_temp.ah_sierah_split(record->'published'),'null'::jsonb))
+ where category='sierah' and position(E'\n\n' in coalesce(record->'draft'->'units'->1->>'ar',''))>0;
+update public.ah_published set content=pg_temp.ah_sierah_split(content)
+ where category='sierah' and position(E'\n\n' in coalesce(content->'units'->1->>'ar',''))>0;
+
 alter table public.ah_content enable trigger ah_guard_draft;
 alter table public.ah_published enable trigger ah_guard_publication;
 commit;
