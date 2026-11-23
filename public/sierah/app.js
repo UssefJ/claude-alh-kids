@@ -61,11 +61,11 @@ function detailView(id){
 }
 
 async function render(){
- const seq=++token;stopAll();
+ const seq=++token,y0=window.scrollY;stopAll();
  try{await load();if(seq!==token)return;
   const id=decodeURIComponent(location.hash.slice(1));
   if(id)detailView(id);else{document.title='Sierah · Al Himmah Kids';listView()}
-  $('#page-title')?.focus({preventScroll:true});const keep=!!(lastId&&id);lastId=id;if(!keep)window.scrollTo(0,0);
+  const keep=!!(lastId&&id);lastId=id;if(keep){window.scrollTo(0,y0);requestAnimationFrame(()=>window.scrollTo(0,y0))}else{$('#page-title')?.focus({preventScroll:true});window.scrollTo(0,0)}
  }catch(e){if(seq!==token)return;$('#main').innerHTML=hero('Sierah','','/','Home')+'<section class="empty"><p>Laden is niet gelukt. Controleer je internetverbinding.</p><button class="soft" id="retry">Opnieuw proberen</button></section>';$('#retry').onclick=()=>{items=null;render()}}
 }
 window.addEventListener('hashchange',render);window.addEventListener('pagehide',stopAll);render();
