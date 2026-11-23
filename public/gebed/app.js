@@ -143,9 +143,8 @@ function render(){
   <button id="next" aria-label="Volgende gebedsstap">Volgende →</button>
 </div>
 
-<p class="control-explanation">Vorige en volgende gebedsstap</p>
-<p id="repeat-help" class="control-explanation"></p>
-<p id="status" class="demo-status" role="status"></p>
+<p id="repeat-help" class="control-explanation visually-hidden"></p>
+<p id="status" class="demo-status visually-hidden" role="status"></p>
 
 ${step===PRAYER_STEPS.length-1?`
 <div class="finish">
