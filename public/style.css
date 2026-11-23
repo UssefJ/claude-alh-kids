@@ -12,9 +12,6 @@
 @media(max-width:599px){.grid{grid-template-columns:1fr}nav{justify-content:center}nav a{font-size:13px;padding:9px 12px}}
 
 /* 1.6: nieuwe wolken-intro en Sierah-tegel */
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.intro.v2{background:none;padding:6px 0 0;min-height:0;height:auto;display:block;margin:0 0 18px}
-.intro.v2 svg{display:block;width:100%;height:auto;max-height:230px;margin:auto}
 .card.sierah .art{inset:0;background:url('/assets/banner/tegel-sierah.webp') center/cover no-repeat}
 .card.sierah .label{display:none}
-@media(orientation:landscape) and (min-width:900px){header{min-height:64px}.intro.v2{height:19svh;min-height:120px;padding:4px 0 0;margin-bottom:16px}.intro.v2 svg{height:100%;width:100%;max-height:none}}
+@media(orientation:landscape) and (min-width:900px){header{min-height:64px}}

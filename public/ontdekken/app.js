@@ -58,4 +58,6 @@ async function render(){const seq=++token;stopAudio();stopAudio=()=>{};let [cat,
  $('#page-title')?.focus({preventScroll:true});window.scrollTo(0,0);
  }catch(e){if(seq!==token)return;$('#main').innerHTML=hero(names[cat],'')+`<section class="empty-panel"><h2>${e.message==='unavailable'?'Dit onderdeel is niet beschikbaar.':'Laden is niet gelukt'}</h2><p>${e.message==='unavailable'?'Het onderdeel kan zijn verborgen of verwijderd.':'Controleer je internetverbinding en probeer opnieuw.'}</p><a class="soft" href="${href(cat)}">Terug</a> <button class="soft" id="retry">Opnieuw proberen</button></section>`;$('#retry').onclick=render}
 }
-window.addEventListener('hashchange',render);window.addEventListener('pagehide',()=>stopAudio());render();
+/* 1.6: Vraag en antwoord is verhuisd naar Sierah. */
+function toSierah(){if(location.hash==='#vragen'||location.hash.startsWith('#vragen/')){location.replace('/sierah/');return true}return false}
+window.addEventListener('hashchange',()=>{if(!toSierah())render()});window.addEventListener('pagehide',()=>stopAudio());if(!toSierah())render();

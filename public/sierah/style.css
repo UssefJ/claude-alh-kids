@@ -1,0 +1,70 @@
+@font-face{font-family:Baloo;src:url('/assets/baloo-bold.ttf') format('truetype');font-weight:800;font-display:swap}
+@font-face{font-family:AmiriQuran;src:url('/assets/amiri-quran.ttf') format('truetype');font-display:swap}
+*{box-sizing:border-box}
+:root{--ink:#0b3a4a;color:var(--ink);background:#fcf7ed;font-family:Baloo,'Trebuchet MS',sans-serif;font-weight:800}
+body{margin:0;background:radial-gradient(ellipse at 40% 30%,#fffdf7,transparent 70%),#fcf7ed}
+button,a{-webkit-tap-highlight-color:transparent;font:inherit;color:inherit}
+button{cursor:pointer}
+a:focus-visible,button:focus-visible{outline:3px solid #278c9e;outline-offset:4px}
+header{display:flex;justify-content:space-between;align-items:center;gap:18px;min-height:72px;padding:8px 4%}
+header nav{display:flex;gap:14px;flex-wrap:wrap}
+header nav a{color:#ffe09b;border:2px solid #e8bd62;border-radius:24px;padding:9px 18px;text-decoration:none;font-size:17px;min-height:44px;display:inline-flex;align-items:center}
+main{max-width:1360px;margin:0 auto;padding:14px 42px 40px}
+.loading,.empty{text-align:center;font-size:20px;color:#527a85;margin:40px 0}
+.hint{text-align:center;font-size:20px;margin:0 0 18px}
+
+/* Lijst met vragen (zoals de Koran-lijst) */
+.list{display:flex;flex-direction:column;gap:18px}
+.row{--bg:#ffe28b;--edge:#f2ca58;display:grid;grid-template-columns:94px minmax(0,1fr);gap:16px}
+.row.mint{--bg:#b8ebd4;--edge:#93d9b9}.row.peach{--bg:#ffc5ac;--edge:#eead8f}.row.lilac{--bg:#dec5f3;--edge:#c6a7e6}.row.blue{--bg:#b9e4f5;--edge:#95d0e8}
+.tile{min-height:88px;border:2px solid var(--edge);border-radius:20px;background:linear-gradient(145deg,#ffffff66,transparent 70%),var(--bg);box-shadow:inset 0 2px 3px #fff9,0 4px 7px #745b3020;color:var(--ink);text-decoration:none;transition:transform .15s,box-shadow .15s}
+.tile:hover{transform:translateY(-2px);box-shadow:inset 0 2px 3px #fff9,0 7px 12px #745b3030}
+.say{display:grid;place-items:center;padding:8px}
+.say:disabled{cursor:default;opacity:.55}.say:disabled:hover{transform:none}
+.speaker{display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:linear-gradient(145deg,#0a6170,#073c4d);color:#fff;box-shadow:inset 0 1px 2px #ffffff50}
+.speaker svg{width:33px;height:33px}
+.say[aria-pressed=true] .speaker{outline:3px solid #fff;outline-offset:3px}
+.open{display:grid;grid-template-columns:minmax(0,1fr) 52px;gap:20px;align-items:center;padding:12px 24px}
+.open .q{font-size:clamp(22px,2.6vw,34px);line-height:1.2;overflow-wrap:anywhere}
+.dot{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:linear-gradient(#fffef7,#fff7e3);border:1px solid #fff;box-shadow:0 3px 4px #7f5e3835;color:#d49213}
+.dot svg{width:16px;height:26px}
+
+/* Vraag en antwoord (zoals een duʿa-pagina) */
+.card{position:relative;isolation:isolate;max-width:1100px;margin:6px auto 0;border:2px solid #e4be62;border-radius:27px;background:#fffdf6;padding:30px 8% 34px;box-shadow:0 4px 10px #aa8c2720;text-align:center}
+.sprig{position:absolute;bottom:0;left:9px;width:70px;height:140px;object-fit:contain;z-index:-1}
+.sprig.right{left:auto;right:9px;transform:scaleX(-1)}
+.label{margin:0 0 4px;font-size:15px;letter-spacing:.08em;color:#b07d18}
+.ar{margin:0 0 22px;padding-top:8px;font-family:AmiriQuran,serif;font-weight:400;font-size:64px;line-height:2.3;color:#0b2f3a}
+.phon{margin:0;padding-top:6px;font-family:system-ui,sans-serif;font-weight:400;font-size:21px;line-height:1.5;color:#46636b}
+.nl{margin:6px 0 0;font-size:28px;line-height:1.3}
+.controls{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px;flex-wrap:wrap}
+.play{width:68px;height:68px;border-radius:50%;border:3px solid #91c89b;background:linear-gradient(#64b577,#318248);color:#fff;display:grid;place-items:center;box-shadow:0 3px 6px #2b633729}
+.play svg{width:28px;height:28px}
+.play:disabled{opacity:.45;cursor:default}
+.controls .what{font-size:18px;color:#2f6f52}
+.soft{border:1px solid #c8d9d2;background:#fffdf6;padding:10px 20px;border-radius:28px;min-height:46px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.soft[aria-pressed=true]{background:#cce9db;border-color:#5b9d82}
+.soft:disabled{opacity:.45;cursor:default}
+.status{min-height:22px;margin:10px 0 0;font:14px/1.5 system-ui,sans-serif;color:#5d7b7a}
+.divider{display:flex;align-items:center;gap:14px;margin:26px auto;max-width:680px}
+.divider span{flex:1;height:2px;background:#e2b84f}
+.divider svg{width:40px;height:40px;flex:none}
+.pager{display:flex;justify-content:space-between;gap:12px;max-width:1100px;margin:22px auto 0;flex-wrap:wrap}
+.pager .soft[aria-disabled=true]{opacity:.45;pointer-events:none}
+.source{max-width:1100px;margin:20px auto 0;font:13px/1.6 system-ui,sans-serif;color:#718885}
+
+@media(max-width:800px){
+  main{padding:10px 16px 30px}
+  .row{grid-template-columns:72px minmax(0,1fr);gap:10px}
+  .tile{min-height:76px;border-radius:17px}
+  .speaker{width:50px;height:50px}.speaker svg{width:27px;height:27px}
+  .open{grid-template-columns:minmax(0,1fr) 36px;gap:10px;padding:10px 14px}
+  .dot{width:36px;height:36px}.dot svg{width:11px;height:18px}
+  .card{padding:22px 16px 28px;border-radius:22px}
+  .sprig{width:44px;height:90px}
+  .ar{font-size:44px;line-height:2.2;margin-bottom:14px}
+  .phon{font-size:18px}.nl{font-size:23px}
+  .play{width:60px;height:60px}
+  .hint{font-size:16px}
+}
+@media(max-width:520px){header nav a{font-size:13px;padding:6px 12px;min-height:38px}.ar{font-size:36px}}
